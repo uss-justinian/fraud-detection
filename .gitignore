@@ -6,4 +6,7 @@ __pycache__/
 venv/
 data/*.csv
 models/*.joblib
+models/*.md
 *.log
+.coverage
+htmlcov/

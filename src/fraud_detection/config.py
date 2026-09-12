@@ -1,5 +1,7 @@
 """Central configuration for the pipeline."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 
@@ -12,8 +14,11 @@ class Config:
     model_type: str = "random_forest"  # "random_forest" or "logistic_regression"
     data_path: str = "data/transactions.csv"
     model_path: str = "models/fraud_model.joblib"
+    model_card_path: str = "models/model_card.md"
+    n_days: int = 90
+    target_precision: float = 0.90
 
-    numeric_features: list = field(
+    numeric_features: list[str] = field(
         default_factory=lambda: [
             "amount",
             "amount_log",
@@ -23,7 +28,7 @@ class Config:
             "transactions_last_24h",
         ]
     )
-    categorical_features: list = field(
+    categorical_features: list[str] = field(
         default_factory=lambda: [
             "merchant_category",
             "is_weekend",
