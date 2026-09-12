@@ -1,27 +1,40 @@
 # fraud-detection
 
-A synthetic-data fraud-detection ML pipeline — the first project in a
-series built and documented in public using a **3-agent AI build process**
-(Specifier → Implementor → Reviewer) instead of one agent doing everything
-end to end.
+An enterprise-scope fraud-detection platform **architecture**, with one
+component built end-to-end as a working reference implementation — the
+first project in a series exploring how AI agents build real systems when
+given a real architecture to build against, not just a one-line prompt.
 
-Every claim below is backed by a committed artifact in this repo, not a
-narrative written after the fact:
+## Start here
 
-| Stage | Artifact | What it proves |
+1. **[`docs/architecture/`](docs/architecture/)** — the platform
+   architecture: system context, components, data flows, detection
+   strategy, decisioning, governance, compliance considerations, and a
+   glossary of domain terms. This is the design, and it's bigger than
+   what's currently running as code — [`DOMAIN_ARCHITECTURE.md`'s
+   Build Status Map](docs/architecture/DOMAIN_ARCHITECTURE.md#14-build-status-map)
+   says exactly which is which.
+2. **[`docs/architecture/CONTEXT_ARCHITECTURE.md`](docs/architecture/CONTEXT_ARCHITECTURE.md)**
+   — how AI agents are given exactly the context needed to build one
+   component of that architecture correctly and consistently, without
+   drift between components or between projects. This is the reusable
+   "how AI enables development" part of the series, independent of fraud
+   detection specifically.
+3. **[`docs/process/`](docs/process/)** — the concrete execution mechanism
+   (Specifier → Implementor → Reviewer) that item 2 above describes in
+   the abstract; used to build the one component that exists today.
+
+Every claim is backed by a committed artifact, not a narrative written
+after the fact:
+
+| Layer | Artifact | What it proves |
 |---|---|---|
-| Specifier | [`docs/spec/SPEC.md`](docs/spec/SPEC.md), [`docs/spec/QA_PLAN.md`](docs/spec/QA_PLAN.md) | Scope, design decisions, and acceptance criteria written *before* any code existed |
-| Implementor | [`src/fraud_detection/`](src/fraud_detection/), [`tests/`](tests/) | Code built strictly against the spec above |
-| Reviewer / QA | [`docs/qa/QA_REPORT.md`](docs/qa/QA_REPORT.md) | Independent re-run of every quality gate and acceptance criterion, in a fresh environment, without trusting the Implementor's self-report |
+| Domain architecture | [`docs/architecture/DOMAIN_ARCHITECTURE.md`](docs/architecture/DOMAIN_ARCHITECTURE.md) | The platform this component is one piece of, and why it's shaped the way it is |
+| Component spec (Specifier) | [`docs/spec/SPEC.md`](docs/spec/SPEC.md), [`docs/spec/QA_PLAN.md`](docs/spec/QA_PLAN.md) | Scope, design decisions, and acceptance criteria for this one component, written *before* any code existed |
+| Implementation (Implementor) | [`src/fraud_detection/`](src/fraud_detection/), [`tests/`](tests/) | Code built strictly against the spec above |
+| Review (Reviewer/QA) | [`docs/qa/QA_REPORT.md`](docs/qa/QA_REPORT.md) | Independent re-run of every quality gate and acceptance criterion, in a fresh environment, without trusting the Implementor's self-report |
 
-See [`docs/process/README.md`](docs/process/README.md) for the reusable
-role definitions ([`specifier.md`](docs/process/specifier.md),
-[`implementor.md`](docs/process/implementor.md),
-[`reviewer.md`](docs/process/reviewer.md)) — these carry over unchanged to
-the next project in the series; only the spec and QA report are
-project-specific.
-
-## What this project is
+## The one component built so far: Offline Model Training & Batch Evaluation
 
 A local, batch CLI that:
 

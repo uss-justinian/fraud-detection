@@ -1,5 +1,13 @@
 # The 3-Agent Build Process
 
+> **This is execution tooling, not the architecture.** It's "Layer 0" of
+> the context model described in
+> [`../architecture/CONTEXT_ARCHITECTURE.md`](../architecture/CONTEXT_ARCHITECTURE.md)
+> — the mechanism used to build any single component *after* the domain
+> architecture ([`../architecture/DOMAIN_ARCHITECTURE.md`](../architecture/DOMAIN_ARCHITECTURE.md))
+> has defined what that component is and why it exists. Read the
+> architecture docs first.
+
 This project is the first in a series built using a repeatable, three-role AI
 agent workflow instead of a single agent doing everything end to end. The
 goal is separation of concerns that mirrors a real engineering team: nobody
