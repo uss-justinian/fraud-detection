@@ -1,0 +1,14 @@
+[
+  {"id": "t01_typo", "task": "Fix the spelling mistake in README.md."},
+  {"id": "t02_docstring", "task": "Add a docstring to Cart.subtotal in shopkit/cart.py explaining what it returns."},
+  {"id": "t03_rename", "task": "Rename the method Cart.calc_total to Cart.compute_total everywhere in the codebase, including tests."},
+  {"id": "t04_bugfix", "task": "The test tests/test_cart.py::test_total_with_discount fails: a 50% discount on a 7.99 coffee gives 2.0 instead of 4.0. Find the cause and fix it so all tests pass."},
+  {"id": "t05_vague", "task": "Customers say checkout totals are sometimes wrong. Look into it and fix whatever is broken."},
+  {"id": "t06_validation", "task": "Make Cart.add_item reject unknown products and non-positive quantities by raising ValueError, and make remove_item raise KeyError with a clear message for items not in the cart. Add pytest tests for each case."},
+  {"id": "t07_json", "task": "Add Cart.to_json() and Cart.from_json(s) that round-trip a cart (items and discount) through a JSON string. Add tests."},
+  {"id": "t08_cli", "task": "Add a command-line interface as shopkit/cli.py (runnable with python -m shopkit.cli) with subcommands: 'products' lists products and prices, 'total' takes item=qty arguments and an optional --discount and prints the total. Add tests for the CLI."},
+  {"id": "t09_tax", "task": "Add a tax module supporting regions 'US-CA' (7.25%), 'US-NY' (4%), 'DE' (19%, prices already include VAT so tax must be extracted rather than added) and 'NONE'. Integrate it into checkout() via a region parameter, return subtotal, tax and total separately, and update receipt(). Add thorough tests including rounding edge cases."},
+  {"id": "t10_refactor", "task": "Refactor shopkit to use dataclasses for cart line items and add full type hints across all modules. Keep the public API working, keep all existing tests passing (fix the currently failing one too), and add a mypy-clean configuration if mypy is available."},
+  {"id": "t11_rules", "task": "Implement a pluggable discount rules engine in shopkit/discounts.py supporting: percentage off the whole cart, buy-X-get-Y-free on a product, and a fixed amount off when the subtotal exceeds a threshold. Rules must be composable with a documented, deterministic order of application. Replace Cart.apply_discount with the engine while keeping backward compatibility, and add comprehensive tests."},
+  {"id": "t12_inventory", "task": "Add stock tracking: a new shopkit/inventory.py holding stock levels per product, make checkout() reserve stock and fail cleanly (without partial reservation) when stock is insufficient, add a restock function, persist inventory to a JSON file with atomic writes, and add tests covering concurrent-looking sequences and failure rollback."}
+]
