@@ -48,3 +48,22 @@ The evaluation reports:
 git clone https://github.com/dariakryvosheieva/agent-psychometrics
 python scripts/train_difficulty.py agent-psychometrics
 ```
+
+## First results (12 tasks × 2 runs, Claude Code with claude-sonnet-5, Sept 2026)
+
+Full numbers in `bench/results/report.json`. Estimates are leave-one-task-out: each task is predicted by a model fitted on the other 11.
+
+| | Typical factor off (P50) | Within 2× | Rank correlation | Actuals inside P10–P90 |
+|---|---|---|---|---|
+| Turns | 1.22× | 12/12 | 0.89 | 19/24 |
+| Input tokens | 1.28× | 11/12 | 0.87 | 19/24 |
+| Cost | 1.13× | 11/12 | 0.87 | 19/24 |
+| Time | 1.56× | 10/12 | 0.90 | 10/24 |
+
+- **Uncalibrated priors** get turns right (1.34×) but overestimate cost 2.8×, because the harness prompt is already cached. Calibration fixes this.
+- **Noise floor:** two runs of the same task differ by 1.09× in turns and 1.18× in tokens at the median, and up to 2.1× in tokens. Estimates cannot beat this.
+- **The token formula holds:** given the true turn count, `T·C0 + T²/2·g` is 1.17× off. Predicting turns is the whole problem.
+- **Which signals track real turns (rank correlation):** files touched 0.93, human minutes 0.89, the LLM's own turn guess 0.88, psychometrics difficulty 0.66. Difficulty adds nothing once human minutes are known.
+- **Baselines for turns:** global median 1.52× off; the LLM guessing its own turns 1.66× off, since it underestimates about 2×.
+
+Limits: one small toy repo, one model, tasks of 4–21 turns. Test on real repositories and longer tasks before trusting it. P(success) is uncalibrated; the sandbox ships with a failing test, so test results after unrelated tasks don't measure success.

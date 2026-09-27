@@ -122,8 +122,10 @@ def main():
         "calibrated (LOO)": [loo_preds[i]["p50"]["turns"] for i in ids],
     }
     base_tbl = {k: {"median_factor_off": round(10 ** st.median(abs(math.log10(p / a)) for p, a in zip(v, turns_act)), 2),
-                    "spearman": round(spearmanr(v, turns_act)[0], 2) if len(set(v)) > 1 else None}
+                    "spearman": round(spearmanr(v, turns_act)[0], 2)}
                 for k, v in base.items()}
+    # A leave-one-out median ranks tasks backwards by construction, so its rank correlation means nothing.
+    base_tbl["global median (LOO)"]["spearman"] = None
 
     # Noise floor: how far apart are two runs of the same task?
     pairs = [(runs[i][0]["num_turns"], runs[i][1]["num_turns"], runs[i][0]["input_total"], runs[i][1]["input_total"])
@@ -149,7 +151,8 @@ def main():
         abs(math.log10(p / r["input_total"])) for p, r in zip(tok_pred, all_runs)), 2),
         "C0": int(full.C0), "g_per_turn": int(full.g), "output_per_turn": int(full.o), "sec_per_turn": round(full.s, 1)}
     success = {"agent_reported_success": f"{sum(r['agent_ok'] for r in all_runs)}/{len(all_runs)}",
-               "tests_pass_after": f"{sum(r['tests_pass'] for r in all_runs)}/{len(all_runs)}"}
+               "tests_pass_after": f"{sum(r['tests_pass'] for r in all_runs)}/{len(all_runs)}",
+               "note": "the sandbox ships with a failing test, so tests only pass after tasks that fix it"}
 
     full.fit_stats = {"loo": score(loo_preds, runs), "prior": score(prior_preds, runs)}
     full.save()
