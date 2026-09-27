@@ -103,5 +103,35 @@
   "human_minutes": 15.0,
   "files_touched": 2.0,
   "agent_turns_guess": 7.0
+ },
+ "t08_cli": {
+  "solution_hint": 3.0,
+  "domain_knowledge_required": 2.0,
+  "logical_reasoning_required": 3.0,
+  "atypicality": 1.0,
+  "verification_difficulty": 3.0,
+  "error_specificity": 4.0,
+  "debugging_complexity": 2.0,
+  "codebase_scope": 2.0,
+  "similar_issue_likelihood": 1.0,
+  "side_effect_risk": 1.0,
+  "human_minutes": 40.0,
+  "files_touched": 2.0,
+  "agent_turns_guess": 8.0
+ },
+ "t09_tax": {
+  "solution_hint": 3.0,
+  "domain_knowledge_required": 2.0,
+  "logical_reasoning_required": 3.0,
+  "atypicality": 1.0,
+  "verification_difficulty": 3.0,
+  "error_specificity": 4.0,
+  "debugging_complexity": 1.0,
+  "codebase_scope": 2.0,
+  "similar_issue_likelihood": 1.0,
+  "side_effect_risk": 2.0,
+  "human_minutes": 60.0,
+  "files_touched": 4.0,
+  "agent_turns_guess": 10.0
  }
 }
