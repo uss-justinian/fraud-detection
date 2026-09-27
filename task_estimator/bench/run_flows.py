@@ -8,50 +8,50 @@ on the task, then runs the tests. One JSON line per run goes to the output file.
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
+import sys
 import tempfile
-import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 BENCH = Path(__file__).resolve().parent
-TOOLS = "Bash Edit Write Read Glob Grep"
-# Strip the parent session's identity so each run is an independent session.
-DROP_ENV = ("CLAUDE_CODE_SESSION_ID", "CLAUDE_CODE_REMOTE_SESSION_ID", "CLAUDECODE", "CLAUDE_CODE_CHILD_SESSION")
+sys.path.insert(0, str(BENCH.parent))
+from estimator import claude  # noqa: E402
+
+AGENT_ARGS = ("--permission-mode", "acceptEdits", "--allowedTools", "Bash Edit Write Read Glob Grep")
 
 
 def run_one(task, rep, model, timeout):
+    """Run the agent on a fresh copy of the sandbox and record what it spent."""
     work = Path(tempfile.mkdtemp(prefix=f"flow_{task['id']}_"))
-    shutil.copytree(BENCH / "sandbox", work, dirs_exist_ok=True)
-    subprocess.run(["git", "init", "-q"], cwd=work)
-    env = {k: v for k, v in os.environ.items() if k not in DROP_ENV}
-    cmd = ["claude", "-p", task["task"], "--model", model, "--output-format", "json",
-           "--permission-mode", "acceptEdits", "--allowedTools", TOOLS]
-    t0 = time.time()
     try:
-        p = subprocess.run(cmd, cwd=work, env=env, capture_output=True, text=True, timeout=timeout)
-        out = json.loads(p.stdout)
-    except (subprocess.TimeoutExpired, json.JSONDecodeError) as e:
-        return {"id": task["id"], "rep": rep, "model": model, "error": repr(e)[:300],
-                "wall_s": time.time() - t0}
-    tests = subprocess.run(["python3", "-m", "pytest", "-q"], cwd=work, capture_output=True, text=True)
-    mu = out.get("modelUsage", {})
-    rec = {
-        "id": task["id"], "rep": rep, "model": model,
-        "num_turns": out.get("num_turns"),
-        "duration_s": out.get("duration_ms", 0) / 1000,
-        "cost_usd": out.get("total_cost_usd"),
-        "input_uncached": sum(m.get("inputTokens", 0) for m in mu.values()),
-        "cache_write": sum(m.get("cacheCreationInputTokens", 0) for m in mu.values()),
-        "cache_read": sum(m.get("cacheReadInputTokens", 0) for m in mu.values()),
-        "output": sum(m.get("outputTokens", 0) for m in mu.values()),
-        "agent_ok": out.get("subtype") == "success" and not out.get("is_error"),
-        "tests_pass": tests.returncode == 0,
-    }
+        shutil.copytree(BENCH / "sandbox", work, dirs_exist_ok=True)
+        subprocess.run(["git", "init", "-q"], cwd=work)
+        record = {"id": task["id"], "rep": rep, "model": model}
+        try:
+            out = claude.run(task["task"], model=model, cwd=work, extra_args=AGENT_ARGS, timeout=timeout)
+        except (subprocess.TimeoutExpired, json.JSONDecodeError) as e:
+            return {**record, "error": repr(e)[:300]}
+        tests = subprocess.run(["python3", "-m", "pytest", "-q"], cwd=work, capture_output=True, text=True)
+        return {**record, **usage(out), "tests_pass": tests.returncode == 0}
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def usage(out):
+    """Turns, time, cost and tokens from a `claude -p --output-format json` result."""
+    per_model = out.get("modelUsage", {}).values()
+
+    def total(key):
+        return sum(m.get(key, 0) for m in per_model)
+
+    rec = {"num_turns": out.get("num_turns"), "duration_s": out.get("duration_ms", 0) / 1000,
+           "cost_usd": out.get("total_cost_usd"),
+           "input_uncached": total("inputTokens"), "cache_write": total("cacheCreationInputTokens"),
+           "cache_read": total("cacheReadInputTokens"), "output": total("outputTokens"),
+           "agent_ok": out.get("subtype") == "success" and not out.get("is_error")}
     rec["input_total"] = rec["input_uncached"] + rec["cache_write"] + rec["cache_read"]
-    shutil.rmtree(work, ignore_errors=True)
     return rec
 
 

@@ -3,7 +3,7 @@
 Before an AI coding agent runs a task, estimate its turns, tokens, cost and time.
 
 ```bash
-python estimate.py "Add rate limiting to the login endpoint, with tests" [--repo PATH]
+python -m estimator "Add rate limiting to the login endpoint, with tests" [--repo PATH]
 ```
 ```json
 {"rating": {"minutes": 40, "files": 2}, "size": "small",
@@ -20,11 +20,23 @@ python estimate.py "Add rate limiting to the login endpoint, with tests" [--repo
 
 `p50` is the typical case, `p90` the worst likely case. All constants live in `params.json`.
 
+## Layout
+
+| File | One job |
+|---|---|
+| `estimator/claude.py` | The only code that calls the `claude` CLI |
+| `estimator/rating.py` | Step 1: prompt, parse the reply into a `Rating(minutes, files)` |
+| `estimator/model.py` | Steps 2–4: `Params`, turn and token formulas, `predict()` |
+| `estimator/fitting.py` | Fit `Params` from runs, leave-one-out scoring |
+| `estimator/calibrate.py` | Command: refit `params.json` from `bench/results` |
+| `estimator/__main__.py` | Command: estimate one task |
+| `bench/run_flows.py` | Run real Claude Code on `bench/tasks.json`, log what it spent |
+
 ## Checking it against real runs
 
 ```bash
 python bench/run_flows.py --reps 2   # run Claude Code on the 12 tasks in bench/tasks.json
-python calibrate.py                  # compare, refit params.json
+python -m estimator.calibrate        # compare, refit params.json
 ```
 
 On 24 runs (Claude Code with claude-sonnet-5), predicting each task from the other 11:

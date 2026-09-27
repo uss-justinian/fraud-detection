@@ -7,7 +7,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
-from estimate import predict, rate
+from estimator.model import predict
+from estimator.rating import rate
 
 LADDERS = {
     "backend": [
@@ -59,9 +60,9 @@ def estimates():
         ratings = list(ex.map(lambda j: rate(j[2]), jobs))
     out = {area: [None] * 3 for area in LADDERS}
     for (area, i, _), r in zip(jobs, ratings):
-        out[area][i] = {"rating": r, **predict(r["minutes"], r["files"])}
+        out[area][i] = {"rating": r, **predict(r)}
     for area, rows in out.items():
-        print(area, [(r["rating"]["minutes"], r["rating"]["files"], r["p50"]["turns"], r["size"]) for r in rows])
+        print(area, [(r["rating"].minutes, r["rating"].files, r["p50"]["turns"], r["size"]) for r in rows])
     return out
 
 
