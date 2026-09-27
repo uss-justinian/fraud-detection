@@ -1,0 +1,50 @@
+{
+ "t12_inventory": {
+  "minutes": 60.0,
+  "files": 4.0
+ },
+ "t07_json": {
+  "minutes": 65.0,
+  "files": 2.0
+ },
+ "t06_validation": {
+  "minutes": 25.0,
+  "files": 2.0
+ },
+ "t02_docstring": {
+  "minutes": 6.0,
+  "files": 1.0
+ },
+ "t10_refactor": {
+  "minutes": 120.0,
+  "files": 6.0
+ },
+ "t04_bugfix": {
+  "minutes": 13.0,
+  "files": 1.0
+ },
+ "t03_rename": {
+  "minutes": 10.0,
+  "files": 3.0
+ },
+ "t05_vague": {
+  "minutes": 190.0,
+  "files": 3.0
+ },
+ "t11_rules": {
+  "minutes": 220.0,
+  "files": 5.0
+ },
+ "t01_typo": {
+  "minutes": 10.0,
+  "files": 1.0
+ },
+ "t09_tax": {
+  "minutes": 320.0,
+  "files": 5.0
+ },
+ "t08_cli": {
+  "minutes": 70.0,
+  "files": 2.0
+ }
+}
